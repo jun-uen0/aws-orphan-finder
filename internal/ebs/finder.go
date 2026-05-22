@@ -103,7 +103,6 @@ func (f *Finder) toOrphan(v ec2types.Volume, now time.Time) (Orphan, bool) {
 
 	return Orphan{
 		VolumeID:         *v.VolumeId,
-		Region:           f.Region,
 		AvailabilityZone: az,
 		SizeGiB:          size,
 		VolumeType:       string(v.VolumeType),

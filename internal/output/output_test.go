@@ -21,7 +21,6 @@ func makeResult() ebs.Result {
 		Orphans: []ebs.Orphan{
 			{
 				VolumeID:                "vol-0123456789abcdef0",
-				Region:                  "ap-northeast-1",
 				AvailabilityZone:        "ap-northeast-1a",
 				SizeGiB:                 100,
 				VolumeType:              "gp3",

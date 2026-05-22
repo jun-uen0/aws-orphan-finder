@@ -3,9 +3,10 @@ package ebs
 import "time"
 
 // Orphan represents a single unattached EBS volume detected as orphaned.
+// Region is intentionally absent: every Orphan in a Result shares the
+// Result.Region value, so per-orphan duplication would be redundant.
 type Orphan struct {
 	VolumeID                string            `json:"volumeId"`
-	Region                  string            `json:"region"`
 	AvailabilityZone        string            `json:"availabilityZone"`
 	SizeGiB                 int32             `json:"sizeGiB"`
 	VolumeType              string            `json:"volumeType"`

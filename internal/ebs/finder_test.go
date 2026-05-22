@@ -92,9 +92,6 @@ func TestFinder_Find_FiltersAndPaginates(t *testing.T) {
 		if o.AgeDays < 30 {
 			t.Errorf("volume %s slipped through MinAgeDays filter (age=%d)", o.VolumeID, o.AgeDays)
 		}
-		if o.Region != "ap-northeast-1" {
-			t.Errorf("region: got %q, want ap-northeast-1", o.Region)
-		}
 	}
 	if got := orphans[0].Tags["Name"]; got != "old-data" {
 		t.Errorf("Tag Name: got %q, want old-data", got)
