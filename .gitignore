@@ -1,0 +1,35 @@
+# Binaries
+/aws-orphan-finder
+/dist/
+/build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# Go workspace
+go.work
+go.work.sum
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local env / secrets (defense in depth — none committed by design)
+.env
+.env.local
+*.pem
+*.key
