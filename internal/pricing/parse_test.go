@@ -58,6 +58,25 @@ const samplePriceListEmptyVolType = `{
   "terms": {}
 }`
 
+const samplePriceListIO2 = `{
+  "product": {
+    "productFamily": "Storage",
+    "attributes": {"volumeApiName": "io2"}
+  },
+  "terms": {
+    "OnDemand": {
+      "X64.JRTCKXETXF": {
+        "priceDimensions": {
+          "X64.JRTCKXETXF.6YS6EN2CT7": {
+            "unit": "GB-month",
+            "pricePerUnit": {"USD": "0.142"}
+          }
+        }
+      }
+    }
+  }
+}`
+
 const samplePriceListIOPSOnly = `{
   "product": {
     "productFamily": "Storage",
@@ -84,6 +103,38 @@ func TestParsePriceListItem_GP3(t *testing.T) {
 	}
 	if !ok || vt != "gp3" || rate != 0.08 {
 		t.Errorf("got (%q, %f, %v), want (gp3, 0.08, true)", vt, rate, ok)
+	}
+}
+
+func TestParsePriceListItem_IO2_GBmonth(t *testing.T) {
+	// Regression: io2 PriceList items use "GB-month" instead of "GB-Mo",
+	// which the original parser silently dropped. Real example pulled from
+	// AWS Pricing API (ap-northeast-1).
+	vt, rate, ok, err := parsePriceListItem(samplePriceListIO2)
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+	if !ok || vt != "io2" || rate != 0.142 {
+		t.Errorf("got (%q, %f, %v), want (io2, 0.142, true)", vt, rate, ok)
+	}
+}
+
+func TestIsPerGBMonthlyUnit(t *testing.T) {
+	cases := map[string]bool{
+		"GB-Mo":    true,
+		"GB-month": true,
+		"GB-Month": true,
+		"gb-mo":    true,
+		"  GB-Mo ": true,
+		"IOPS-Mo":  false,
+		"":         false,
+		"GiB-Mo":   false,
+		"hours":    false,
+	}
+	for in, want := range cases {
+		if got := isPerGBMonthlyUnit(in); got != want {
+			t.Errorf("isPerGBMonthlyUnit(%q) = %v, want %v", in, got, want)
+		}
 	}
 }
 

@@ -3,6 +3,7 @@ package pricing
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 )
 
 // priceListItem mirrors the relevant subset of a single AWS Pricing API
@@ -44,7 +45,7 @@ func parsePriceListItem(raw string) (string, float64, bool, error) {
 	}
 	for _, term := range item.Terms.OnDemand {
 		for _, dim := range term.PriceDimensions {
-			if dim.Unit != "GB-Mo" {
+			if !isPerGBMonthlyUnit(dim.Unit) {
 				continue
 			}
 			usd, ok := dim.PricePerUnit["USD"]
@@ -59,4 +60,13 @@ func parsePriceListItem(raw string) (string, float64, bool, error) {
 		}
 	}
 	return "", 0, false, nil
+}
+
+// isPerGBMonthlyUnit reports whether a Pricing API priceDimensions.unit
+// string represents per-GB-per-month storage. AWS is inconsistent across
+// SKUs: gp3 / gp2 / io1 / st1 / sc1 report "GB-Mo", while io2 reports
+// "GB-month". Both forms (and case variants) mean the same thing.
+func isPerGBMonthlyUnit(unit string) bool {
+	u := strings.ToLower(strings.TrimSpace(unit))
+	return strings.HasPrefix(u, "gb-mo")
 }
