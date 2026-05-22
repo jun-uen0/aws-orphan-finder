@@ -46,6 +46,22 @@ func TestParseFlags_NegativeAge(t *testing.T) {
 	}
 }
 
+func TestParseFlags_BadPricingRegion(t *testing.T) {
+	_, err := parseFlags("test", []string{"--region", "x", "--pricing-region", "us-east1"}, io.Discard)
+	if err == nil || !strings.Contains(err.Error(), "--pricing-region") {
+		t.Errorf("expected --pricing-region error, got %v", err)
+	}
+}
+
+func TestParseFlags_ValidPricingRegions(t *testing.T) {
+	for _, region := range []string{"us-east-1", "ap-south-1", "eu-central-1"} {
+		_, err := parseFlags("test", []string{"--region", "x", "--pricing-region", region}, io.Discard)
+		if err != nil {
+			t.Errorf("pricing-region %q rejected: %v", region, err)
+		}
+	}
+}
+
 func TestParseFlags_AllOptions(t *testing.T) {
 	opts, err := parseFlags("test", []string{
 		"--region", "eu-west-1",

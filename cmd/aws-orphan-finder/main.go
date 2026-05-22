@@ -69,6 +69,11 @@ func parseFlags(progName string, args []string, errOut io.Writer) (options, erro
 	if opts.minAgeDays < 0 {
 		return opts, fmt.Errorf("--min-age-days must be non-negative, got %d", opts.minAgeDays)
 	}
+	switch opts.pricingRegion {
+	case "us-east-1", "ap-south-1", "eu-central-1":
+	default:
+		return opts, fmt.Errorf("--pricing-region must be one of us-east-1, ap-south-1, eu-central-1 (the only AWS Pricing API endpoints); got %q", opts.pricingRegion)
+	}
 	return opts, nil
 }
 
